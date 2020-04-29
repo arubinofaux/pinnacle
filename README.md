@@ -36,9 +36,11 @@ To make the custom programming cable, you will need the following items:
 - ST-Link V2 (Can be found on eBay for about $5 USD)
 - Micro-USB Cable
 
-You will need to cut the Micro-USB cable and strip the wires to attach them to the ST-Link. We recommend attaching Dupont pin headers.
+You will need to cut the Micro-USB cable and strip the wires to attach them to the ST-Link. We recommend attaching Dupont pin headers, though if a crimper is not available, you may solder jumper wires that are pre-crimped with dupont headers on one end. In the end, your final cable should look like the following:
 
-If you have more patience than I do, you can order a "Micro USB to dupont" cable on ebay and wait for the slow shipping.
+![Custom cable](custom_cable.jpg)
+
+Do not order premade cables as they all come crimped in an layout for ST-Link V2 pinouts. 
 
 - STLink 5v -> USB Red Wire
 - STLink GND -> USB Black Wire
@@ -47,13 +49,34 @@ If you have more patience than I do, you can order a "Micro USB to dupont" cable
 
 
 ## Development Toolchain Setup
-This document assumes you are running on Mac OS or Linux, if you need to setup on Windows, feel free to submit contributions to this document.
+This document assumes you are running on Mac OS or Linux.
 
 You will need a Python3 environment and to pip install pyusb or libusb. We also assume you have a basic environment setup with the normal tools: homebrew, git, etc.
 
 If you wish to do normal debugging and set breakpoints, etc. This document will assume you have VSCode installed.
 
 Make sure your device is connected to the ST-Link with the custom USB to SWD Cable.
+
+### Windows specific instructions
+
+Windows requires a bit more configuration as it doesn't come with a development environment set up out of the box, however it works just as well with a bit of work. 
+
+1. Download and install STM drivers for interfacing with the ST-Link from here (free account needed): [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html)
+2. Install the firmware update utility for the ST-Link V2 from here: [STSW-LINK007](https://www.st.com/en/development-tools/stsw-link007.html)
+3. Plug in the ST-Link V2 and load the firmware utility. Follow the directions to flash new firmware to the device. This is important as older firmware may not interface properly going forward with ST's various software. 
+4. [Install Python 3](https://www.python.org/downloads/) and make sure PIP is installed
+5. Open a terminal window (either using Windows Terminal or Command Prompt) and run the following:
+`pip install pyusb`
+
+NOTE: If you have more than one Python version installed you may need to specify what PIP version you want to use to install the packages. `pip3` is usually the most common nomenclature for the proper command in these instances but may not be depending on your system configuration. 
+
+6. You will need to install libusb which on Windows consists of a single DLL and a LIB file. These are stored in the repository in the Windows_Dependency folder (credit to the [libusb](https://github.com/libusb/libusb) project). Copy `libusb-1.0.dll` to `C:\Windows\System32` and also to `C:\Windows\SysWOW64` (both locations are required on 64 bit systems). Then copy `libusb-1.0.lib` to `%LOCALAPPDATA%\Programs\Python\<VERSION>\libs` substituting "VERSION" with the installed Python version you are using for the project. 
+
+NOTE: The supplied libusb files are 64 bit specific for now. There are 32 bit versions available from the above libusb project link.
+
+7. (OPTIONAL): I recommend you install the [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) which can help set things like encryption flags on the processor, dump firmware and generally make working with STM chips easier. 
+
+Continue as normal following the rest of the steps outlined below. 
 
 ### Backup OFW (Original Firmware)
 You should take a dump of your original, unmodified device firmware before you go any further and keep it in a safe place.
